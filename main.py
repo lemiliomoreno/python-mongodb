@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from bson import ObjectId
 
 
 MONGODB_URL = "mongodb://academia:academia@localhost:27017"
@@ -14,6 +15,7 @@ def insert(items: list):
     database = get_db()
 
     for item in items:
+        item["_id"] = str(ObjectId())
         database.inventory.insert_one(item)
 
 
@@ -24,7 +26,36 @@ def get(filter: dict):
         print(item)
 
 
-get(filter={"category": "Blancos"})
+def update(filter: dict, new_value: dict):
+    database = get_db()
+
+    database.inventory.update_one(
+        filter,
+        {
+            "$set": new_value,
+        }
+    )
+
+
+def delete(id):
+    database = get_db()
+
+    database.inventory.delete_one({"_id": id})
+
+
+# delete("6490fd615aaeebe21135fe45")
+
+# update(
+#     filter={"_id": "6490fde7d3975ed3c7279dae"},
+#     new_value={
+#         "name": "Papel de baño UPDATE",
+#         "category": "Blancos",
+#         "quantity": 50,
+#         "price": 15,
+#     }
+# )
+
+# get(filter={"_id": "6490fd615aaeebe21135fe46"})
 
 # insert([
 #     {
